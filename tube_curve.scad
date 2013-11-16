@@ -3,12 +3,20 @@ tbScaleX = 1.0;
 tbScaleY = 1.0;
 tbScaleZ = 1.0;
 
+// Draw Curve Module
+tubeCurve(tbScaleX, tbScaleY, tbScaleZ);
+
+
+
+
+
+
 
 /* Create Tube Curve */
-module tubeCurve() {
+module tubeCurve(sX, sY, sZ) {
 	cylHeight = 15;
 	cylRadius = 100;
-	scale([tbScaleX, tbScaley, tbScaleZ])
+	scale([sX, sY, sZ])
 	difference() {
 		    difference()  {
 				// INNER RADIUS CUT-OUT
@@ -44,7 +52,3 @@ module tubeCurve() {
 
 	}
 }
-
-
-// Draw Curve Module
-tubeCurve();
