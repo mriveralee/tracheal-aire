@@ -14,8 +14,10 @@ angleRadius = 45.72;
 partialAngle = 90;
 
 
-// Plate
+// Front Plate
 difference(){
+
+	// Plate + hole
 	difference(){
 		linear_extrude(height = plateT, center = false, scale = 1.0)
 		polygon(points = [[plateW/2, plateH/2], [plateW/2, -plateH/2], [-plateW/2, -plateH/2],[-plateW/2, plateH/2]]);
@@ -25,6 +27,7 @@ difference(){
 	}
 
 
+	// Fillet #1
 	translate([-plateW/2,-plateH/2,plateT/2])
 	fillet(5,plateT)
 	difference(){
@@ -35,6 +38,7 @@ difference(){
 		circle(plateHoleD/2);
 	}
 
+	// Fillet #2
 	translate([-plateW/2,plateH/2,plateT/2])
 	rotate([0,0,-90])
 	fillet(5,plateT)
@@ -46,6 +50,7 @@ difference(){
 		circle(plateHoleD/2);
 	}
 
+	// Fillet #3
 	translate([plateW/2,plateH/2,plateT/2])
 	rotate([0,0,180])
 	fillet(5,plateT)
@@ -57,6 +62,7 @@ difference(){
 		circle(plateHoleD/2);
 	}
 
+	// Fillet #4
 	translate([plateW/2,-plateH/2,plateT/2])
 	rotate([0,0,90])
 	fillet(5,plateT)
@@ -68,14 +74,12 @@ difference(){
 		circle(plateHoleD/2);
 	}
 
+	// Dimple on top
 	translate([0,0.6*plateH,0])
 	linear_extrude(height = plateT, center = false)
 	circle((plateHoleD/2));
 
 }
-
-
-
 
 
 // Tube Part 1

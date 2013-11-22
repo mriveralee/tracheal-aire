@@ -1,8 +1,8 @@
 function main(params)
 {
-	var intubator = trache(
-		params.plateHoleD,
-		params.tubeP1Length
+    var intubator = trache(
+        params.plateHoleD,
+    	params.tubeP1Length
 	);
 	return intubator;
 }
@@ -11,8 +11,9 @@ function main(params)
 // Here we define the user editable parameters: 
 function getParameterDefinitions() {
   return [
-    { name: 'plateHoleD', caption: 'Hole diameter:', type: 'int', default: 13.46 },
-    { name: 'tubeP1Length', caption: 'Tube length:', type: 'float', default: 50.8},
+    { name: 'plateHoleD', type: 'float', initial: 13.46, caption: "Hole diameter:" },
+    { name: 'tubeP1Length', type: 'float', initial: 50.8, caption: "Tube length:" }
+
   ];
 }
 
@@ -30,141 +31,58 @@ function trache(plateHoleD, tubeP1Length){
 
 	// Front Plate
 	var plateRounded = CAG.roundedRectangle({center: [0, 0], radius: [plateW/2, plateH/2], roundradius: 1, resolution: 24});
-	var plateHole = CAG.circle({center: [0, 0], radius: plateHoleD, resolution: 20});
+	var plateHole = CAG.circle({center: [0, 0], radius: plateHoleD/2, resolution: 20});
 	var frontPlate = plateRounded.subtract(plateHole);
+	var extrudedFrontPlate = linear_extrude({ height: plateT }, frontPlate);
 
-	var extrudedFrontPlate = frontPlate.extrude({
-	  offset: [0, plateT, 0],   // direction for extrusion
-	});
+	
 
-
-	/*
-	difference(){
-
-		// Plate + hole
-		difference(){
-			linear_extrude(height = plateT, center = false, scale = 1.0)
-			polygon(points = [[plateW/2, plateH/2], [plateW/2, -plateH/2], [-plateW/2, -plateH/2],[-plateW/2, plateH/2]]);
-				
-			linear_extrude(height = plateT, center = false, scale = 1.0)
-			circle(plateHoleD/2);
-		}
-
-
-		// Fillet #1
-		translate([-plateW/2,-plateH/2,plateT/2])
-		fillet(5,plateT)
-		difference(){
-			linear_extrude(height = plateT, center = false, scale = 1.0)
-			polygon(points = [[plateW/2, plateH/2], [plateW/2, -plateH/2], [-plateW/2, -plateH/2],[-plateW/2, plateH/2]]);
-				
-			linear_extrude(height = plateT, center = false, scale = 1.0)
-			circle(plateHoleD/2);
-		}
-
-		// Fillet #2
-		translate([-plateW/2,plateH/2,plateT/2])
-		rotate([0,0,-90])
-		fillet(5,plateT)
-		difference(){
-			linear_extrude(height = plateT, center = false, scale = 1.0)
-			polygon(points = [[plateW/2, plateH/2], [plateW/2, -plateH/2], [-plateW/2, -plateH/2],[-plateW/2, plateH/2]]);
-				
-			linear_extrude(height = plateT, center = false, scale = 1.0)
-			circle(plateHoleD/2);
-		}
-
-		// Fillet #3
-		translate([plateW/2,plateH/2,plateT/2])
-		rotate([0,0,180])
-		fillet(5,plateT)
-		difference(){
-			linear_extrude(height = plateT, center = false)
-			polygon(points = [[plateW/2, plateH/2], [plateW/2, -plateH/2], [-plateW/2, -plateH/2],[-plateW/2, plateH/2]]);
-				
-			linear_extrude(height = plateT, center = false)
-			circle(plateHoleD/2);
-		}
-
-		// Fillet #4
-		translate([plateW/2,-plateH/2,plateT/2])
-		rotate([0,0,90])
-		fillet(5,plateT)
-		difference(){
-			linear_extrude(height = plateT, center = false)
-			polygon(points = [[plateW/2, plateH/2], [plateW/2, -plateH/2], [-plateW/2, -plateH/2],[-plateW/2, plateH/2]]);
-				
-			linear_extrude(height = plateT, center = false)
-			circle(plateHoleD/2);
-		}
-
-		// Dimple on top
-		translate([0,0.6*plateH,0])
-		linear_extrude(height = plateT, center = false)
-		circle((plateHoleD/2));
-
-	}
-	*/
 
 	// Tube Part 1
 	var outerCyl = CSG.cylinder({
-  		start: [0, plateT, 0],
-  		end: [0, tubeP1Length, 0],
-  		radius: tubeOuterRad,
-  		resolution: 16        // optional
+        start: [0, 0, plateT],
+        end: [0, 0, tubeP1Length],
+        radius: tubeOuterRad,
+        resolution: 30        // optional
 	});
 	var innerCyl = CSG.cylinder({
-  		start: [0, plateT, 0],
-  		end: [0, tubeP1Length, 0],
-  		radius: plateHoleD/2,
-  		resolution: 16        // optional
+        start: [0, 0, plateT],
+        end: [0, 0, tubeP1Length],
+        radius: plateHoleD/2,
+        resolution: 30        // optional
 	});
-	var tube = outerCyl.subtract(innerCyl);
+	var tube1 = outerCyl.subtract(innerCyl);
 
 
-/*
+
+
+
 	// Tube Part 2
-	translate([0,-angleRadius,plateT+tubeP1Length])
-	rotate([0,-90,0])
-	partial_rotate_extrude(partialAngle, angleRadius, 10)
-	difference(){
-		circle(tubeOuterRad);
-		translate([-wallThickness,0,0]) circle(tubeOuterRad);
-	}
-*/
+ //    var tube21 = torus({ ri: 1.5, ro: 3 }).rotateY(90).translate([0, 0, tubeP1Length]);
+ // 	var tube22 = torus({ ri: 1.5, ro: 3 }).rotateY(90).translate([0, 0, tubeP1Length]);
+	// var finalTube = union(tube1, extrudedFrontPlate, tube2);
 
-var final = tube.union(extrudedFrontPlate);
-return final;
+
+	// var finalTube = rotate_extrude( translate([0,0,0], circle({r: 1, fn: 30, center: true}) ) );
+	var extrudeShape = difference(circle({r: 1, fn: 30, center: true}), translate([1 0 0], circle({r: 1, fn: 30, center: true})) );
+	var finalTube = rotate_extrude( translate([0,0,0], extrudeShape) );
+
+
+	return finalTube;
+
+    // var final = tube.union(extrudedFrontPlate);
+    // return final;
 }
 
 /******* MODULES *******/
 
-function pie_slice(radius, angle, step) {
-	for(theta = [0:step:angle-step]) {
-		rotate([0,0,0]) linear_extrude(height = radius*2, center=true)
-		polygon( points = [[0,0],[radius * cos(theta+step) ,radius * sin(theta+step)],[radius*cos(theta),radius*sin(theta)]]);
-	}
-}
+// function pie_slice(radius, angle, step) {
+//     for(theta = 0; theta < (angle-step);  theta++) {
+//             polygon( points = [[0,0],[radius * cos(theta+step) ,radius * sin(theta+step)],[radius*cos(theta),radius*sin(theta)]]).linear_extrude(height = radius*2, center=true).rotate([0,0,0]);
+//     }
+// }
 
-function partial_rotate_extrude(angle, radius, convex) {
-	intersection () {
-		rotate_extrude(convexity=convex) translate([radius,0,0]) child(0);
-		pie_slice(radius*2, angle, angle/5);
-	}
-}
-
-function fillet(r, h) {
-    translate([r / 2, r / 2, 0])
-
-        difference() {
-            cube([r + 0.01, r + 0.01, h], center = true);
-
-            translate([r/2, r/2, 0])
-                cylinder(r = r, h = h + 1, center = true);
-
-        }
-}
-
-
-
+// function partial_rotate_extrude(angle, radius, convex) {
+//     rotate_extrude(convexity=convex).translate([radius,0,0]).intersect ( pie_slice(radius*2, angle, angle/5) _;
+// }
 
