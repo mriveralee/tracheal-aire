@@ -1,3 +1,45 @@
+function main(params) {
+    var sqrt3 = Math.sqrt(3) / 2;
+    var radius = 10;
+
+    // var hex = CSG.Polygon.createFromPoints([
+    //     [radius, 0, 0],
+    //     [radius / 2, radius * sqrt3, 0],
+    //     [-radius / 2, radius * sqrt3, 0],
+    //     [-radius, 0, 0],
+    //     [-radius / 2, -radius * sqrt3, 0],
+    //     [radius / 2, -radius * sqrt3, 0]
+    // ]);
+    
+    var hex = CSG.Polygon.createFromPoints([
+        [radius, 0, 0],
+        [-radius, 0, 0],
+        [-radius / 2, -radius * sqrt3, 0],
+        [radius / 2, -radius * sqrt3, 0]
+    ]);
+
+    var angle = 1;
+    var innerRad = 20;
+    return hex.solidFromSlices({
+      // numslices: 720 / angle,
+      numslices: 1000,
+      callback: function(t, slice) {
+         var coef = 1;// - t * 0.8;
+         return this.rotateZ(1 * slice).scale(coef).translate([0, 0, 0]).rotate(
+            [0, innerRad, 0],
+            [20, 0, 0],
+            angle * slice
+         );
+      }
+   });
+}
+
+
+
+
+
+
+
 function main(params)
 {
     var intubator = trache(
@@ -53,19 +95,19 @@ function trache(plateHoleD, tubeP1Length){
 	});
 	var tube1 = outerCyl.subtract(innerCyl);
 
-
+  var finalTube = union(tube1, extrudedFrontPlate);
 
 
 
 	// Tube Part 2
- //    var tube21 = torus({ ri: 1.5, ro: 3 }).rotateY(90).translate([0, 0, tubeP1Length]);
- // 	var tube22 = torus({ ri: 1.5, ro: 3 }).rotateY(90).translate([0, 0, tubeP1Length]);
+	// var tube21 = torus({ ri: 1.5, ro: 3 }).rotateY(90).translate([0, 0, tubeP1Length]);
+	// var tube22 = torus({ ri: 1.5, ro: 3 }).rotateY(90).translate([0, 0, tubeP1Length]);
 	// var finalTube = union(tube1, extrudedFrontPlate, tube2);
 
 
 	// var finalTube = rotate_extrude( translate([0,0,0], circle({r: 1, fn: 30, center: true}) ) );
-	var extrudeShape = difference(circle({r: 1, fn: 30, center: true}), translate([1 0 0], circle({r: 1, fn: 30, center: true})) );
-	var finalTube = rotate_extrude( translate([0,0,0], extrudeShape) );
+	// var extrudeShape = circle({r: 1, fn: 30, center: true}).subtract(circle({r: 0.5, fn: 30, center: true}).translate[0,1,0]);
+	// var finalTube = rotate_extrude( translate([0,0,0], extrudeShape) );
 
 
 	return finalTube;
