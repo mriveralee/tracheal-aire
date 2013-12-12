@@ -51,10 +51,15 @@ function trache(plateHoleD, tubeP1Length, h_t, r_tor){
 
 function make_front_plate(plateHoleD, plateW, plateH, plateT, wallThickness){
 
-    var plateRounded        = CAG.roundedRectangle({center: [0, 0], radius: [plateW/2, plateH/2], roundradius: 1, resolution: 24});
+    var plateRounded        = CAG.roundedRectangle({center: [0, 0], radius: [plateW/2, plateH/2], roundradius: 5, resolution: 24});
     var plateHole           = CAG.circle({center: [0, 0], radius: plateHoleD/2, resolution: fineness});
     var frontPlate          = plateRounded.subtract(plateHole);
     var extrudedFrontPlate  = linear_extrude({ height: plateT }, frontPlate);
+
+	// Dimple on top
+	translate([0,0.6*plateH,0])
+	linear_extrude(height = plateT, center = false)
+	circle((plateHoleD/2));
 
     return extrudedFrontPlate;
 }
