@@ -14,10 +14,10 @@ function main(params)
 // Here we define the user editable parameters: 
 function getParameterDefinitions() {
   return [
-    { name: 'plateHoleD',   type: 'float', initial: 13.46,  caption: "Hole diameter:" },
-    { name: 'tubeP1Length', type: 'float', initial: 50.8,   caption: "Tube length:" },
-    { name: 'h_t',          type: 'float', initial: 20,     caption: "Tube height:" },
-    { name: 'r_tor',        type: 'float', initial: 50.8,   caption: "Curvature:" }
+    { name: 'plateHoleD',   type: 'float', initial: 19,  caption: "Hole diameter:" },
+    { name: 'tubeP1Length', type: 'float', initial: 50,   caption: "Tube length:" },
+    { name: 'h_t',          type: 'float', initial: 35,     caption: "Tube height:" },
+    { name: 'r_tor',        type: 'float', initial: 30,   caption: "Curvature:" }
   ];
 }
 
@@ -28,7 +28,7 @@ function trache(plateHoleD, tubeP1Length, h_t, r_tor){
     plateW = 34.925;
     plateH = 27.95;
     plateT = 3.3;
-    wallThickness = 3;
+    wallThickness = 2;
     tubeOuterRad = plateHoleD/2+wallThickness;
     fineness = 30;
 
@@ -83,10 +83,13 @@ function make_tube2(r_tor, h_t, wallThickness, fineness, plateT, tubeP1Length, t
     var r_o         = tubeOuterRad;
     var r_i         = r_o - wallThickness;
     var r_oe        = r_tor + r_o;
+    var r_sq        = r_tor - r_o;
+    var s_sq        = r_o*1.2;
 
     var largeRing   = rotate_extrude(translate([r_tor,0,0],circle({r: r_o, fn: fineness, center: true})));
     var smallRing   = rotate_extrude(translate([r_tor,0,0],circle({r: r_i, fn: fineness, center: true})));
-    var donut       = largeRing.subtract(smallRing);
+    var squareRing   = translate([0,0,-s_sq/2],rotate_extrude(translate([r_sq,0,0],square(s_sq))));
+    var donut       = (largeRing.subtract(smallRing)).subtract(squareRing);
 
     var TWOD_block  = CAG.fromPoints([ [0,r_oe], [-r_oe,r_oe], [-r_oe,-r_oe], [r_oe,-r_oe], [r_oe,r_oe-h_t], [0,r_oe-h_t] ]); 
     var THREED_block= linear_extrude({ height: 2*r_o }, TWOD_block);
