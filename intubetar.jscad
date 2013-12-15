@@ -14,10 +14,10 @@ function main(params)
 // Here we define the user editable parameters: 
 function getParameterDefinitions() {
   return [
-    { name: 'plateHoleD',   type: 'float', initial: 19,  caption: "Hole diameter:" },
-    { name: 'tubeP1Length', type: 'float', initial: 50,   caption: "Tube length:" },
-    { name: 'h_t',          type: 'float', initial: 35,     caption: "Tube height:" },
-    { name: 'r_tor',        type: 'float', initial: 30,   caption: "Curvature:" }
+    { name: 'plateHoleD',   type: 'float', initial: 17,  caption: "Hole diameter:" },
+    { name: 'tubeP1Length', type: 'float', initial: 40,   caption: "Tube length:" },
+    { name: 'h_t',          type: 'float', initial: 40,     caption: "Tube height:" },
+    { name: 'r_tor',        type: 'float', initial: 35,   caption: "Curvature:" }
   ];
 }
 
@@ -25,10 +25,10 @@ function getParameterDefinitions() {
 function trache(plateHoleD, tubeP1Length, h_t, r_tor){
 
     // Variables
-    plateW = 34.925;
-    plateH = 27.95;
-    plateT = 3.3;
-    wallThickness = 2;
+    plateW = 35;
+    plateH = 28;
+    plateT = 3.25;
+    wallThickness = 1.75;
     tubeOuterRad = plateHoleD/2+wallThickness;
     fineness = 30;
 
@@ -53,13 +53,9 @@ function make_front_plate(plateHoleD, plateW, plateH, plateT, wallThickness){
 
     var plateRounded        = CAG.roundedRectangle({center: [0, 0], radius: [plateW/2, plateH/2], roundradius: 5, resolution: 24});
     var plateHole           = CAG.circle({center: [0, 0], radius: plateHoleD/2, resolution: fineness});
-    var frontPlate          = plateRounded.subtract(plateHole);
+    var dimp                = CAG.circle({center: [0, 0.65*plateH], radius: plateHoleD/2, resolution: fineness});
+    var frontPlate          = (plateRounded.subtract(plateHole)).subtract(dimp);
     var extrudedFrontPlate  = linear_extrude({ height: plateT }, frontPlate);
-
-	// Dimple on top
-	translate([0,0.6*plateH,0])
-	linear_extrude(height = plateT, center = false)
-	circle((plateHoleD/2));
 
     return extrudedFrontPlate;
 }
@@ -88,8 +84,8 @@ function make_tube2(r_tor, h_t, wallThickness, fineness, plateT, tubeP1Length, t
     var r_o         = tubeOuterRad;
     var r_i         = r_o - wallThickness;
     var r_oe        = r_tor + r_o;
-    var r_sq        = r_tor - r_o;
-    var s_sq        = r_o*1.2;
+    var r_sq        = r_tor - 2*r_o;
+    var s_sq        = r_o*2;
 
     var largeRing   = rotate_extrude(translate([r_tor,0,0],circle({r: r_o, fn: fineness, center: true})));
     var smallRing   = rotate_extrude(translate([r_tor,0,0],circle({r: r_i, fn: fineness, center: true})));
