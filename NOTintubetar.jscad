@@ -30,7 +30,7 @@ function getParameterDefinitions() {
   return [
     { name: 'plateHoleD',   type: 'float', initial: 15,  caption: "Hole diameter [mm]:" },
     { name: 'tubeP1Length', type: 'float', initial: 28,  caption: "Tube length [mm]:" },
-    { name: 'h_t',          type: 'float', initial: 35,  caption: "Tube height [mm]:" },
+    { name: 'h_t',          type: 'float', initial: 40,  caption: "Tube height [mm]:" },
     { name: 'r_tor',        type: 'float', initial: 35,  caption: "Curvature [mm]:" },
     { name: 'resolution',   type: 'float', initial: 10,  caption: "Resolution:" }   // resolution of the cylinders
   ];
@@ -107,7 +107,7 @@ function make_tube2(r_tor, h_t, wallThickness, fine, plateT, tubeP1Length, tubeO
     var r_o         = tubeOuterRad;         // 
     var r_i         = r_o - wallThickness;
     var r_oe        = r_tor + r_o;
-    var r_sq        = r_tor - 1.5*r_o;
+    var r_sq        = r_tor - 0.5*r_o;
     var s_sq        = r_o*2;
 
     var largeRing   = rotate_extrude(translate([r_tor,0,0],circle({r: r_o, fn: fine, center: true})));
