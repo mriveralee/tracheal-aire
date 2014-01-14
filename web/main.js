@@ -1,6 +1,9 @@
 
 $( document ).ready(function() {
 
+  // Tube that is loaded initially
+  var INITIAL_TUBE = 'Williams Airway';
+
   // Div that contains this tube's data
   var TUBE_DATA = {
     'Williams Airway': '#williams-airway-data',
@@ -9,6 +12,7 @@ $( document ).ready(function() {
   // The last selected tube
   var LAST_TUBE = null;
 
+  // Updates the Tube when selected in the drop down
   function updateTube(tubeName) {
     // Don't update if no change in tube
     if (LAST_TUBE === tubeName) return;
@@ -30,10 +34,16 @@ $( document ).ready(function() {
     LAST_TUBE = tubeName;
   }
 
+   /****** LISTENER *******/
   // Set up on lose focus, trigger switchTube
   $('#tube-list').change(function() {
     updateTube(this.value);
   });
 
-    console.log( "ready!" );
+
+  // Declare Initial Tube for loading
+  (function () {
+    updateTube(INITIAL_TUBE);
+  }());
+  
 });
